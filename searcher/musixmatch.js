@@ -54,7 +54,11 @@ export function getLyrics(meta, man)
         try {
             let obj = JSON.parse(body);
             let trackList = obj['message']['body']['track_list'];
-            for(const trackObj of trackList) {
+            
+            if(trackList===undefined) { // maybe rate limited
+                console.log('!!! ' + JSON.stringify(obj));
+            }
+            for(const trackObj of (trackList || [])) {
                 let track = trackObj['track'];
                 let id = track['commontrack_id'] | 0;
                 let title = track['track_name'];
