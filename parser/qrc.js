@@ -57,7 +57,7 @@ function qrcToLrc(xmlText) {
     var matches;
     var metaRegex = /^\[(\S+):(\S+)\]$/;
     var tsRegex = /^\[(\d+),(\d+)\]/;
-    var ts2Regex = /([^(^\]]*)\((\d+),(\d+)\)/g;
+    var ts2Regex = /([^(^\]]*|\()\((\d+),(\d+)\)/g;
     var lines = qrcText.split(/[\r\n]/);
     for (const line of lines) {
         //console.log(line);
