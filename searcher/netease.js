@@ -111,6 +111,9 @@ export function getLyrics(meta, man) {
                 let album = song['album'] || {};
                 album = album['name'] || '';
                 candicates.push({ id: id, title: title, artist: artist, album: album });
+                
+                if(candicates.length>=4)
+                    break;
             }
         } catch(e){ }
         var lyricMeta = man.createLyric();
@@ -127,10 +130,10 @@ export function getLyrics(meta, man) {
                     let lyricObj = JSON.parse(body);
                     let lyricText = '';
                     if (lyricObj['lrc']) {
-                        lyricText = lyricObj['lrc']['lyric'] || '';
+                        lyricText = remove_leading_space(lyricObj['lrc']['lyric'] || '');
                     }
                     if (lyricObj['tlyric']) {
-                        lyricText += lyricObj['tlyric']['lyric'] || '';
+                        lyricText += remove_header_and_empty_line(lyricObj['tlyric']['lyric'] || '');
                     }
                     lyricMeta.title = item.title;
                     lyricMeta.artist = item.artist;
@@ -144,4 +147,22 @@ export function getLyrics(meta, man) {
 
     // loop to 'wait' callback(promise)
     messageLoop(0);
+}
+
+function remove_leading_space(s) {
+    return s.split(/[\r\n]/).map((l)=>{
+        return l.replace(/] +/, ']').trimEnd();
+    }).join('\n');
+}
+
+function remove_header_and_empty_line(s) {
+    return s.split(/[\r\n]/).filter((l)=>{
+        if(!l)
+            return false;
+        if((/^\[[a-z]+:/.test(l)))
+            return false;
+        if(/^\[.+\]$/.test(l))
+            return false;
+        return true;
+    }).join('\n');
 }
