@@ -52,22 +52,25 @@ function qrcToLrc(xmlText) {
     var lyricText = "";
     var matches;
     var metaRegex = /^\[(\S+):(\S+)\]$/;
-    var tsRegex = /^\[(\d+),(\d+)\]/;
-    var ts2Regex = /([^(^\]]*|\()\((\d+),(\d+)\)/g;
+    var tsRegex = /^\[(\d+),(\d+)\](.*)$/;
+    var ts2Regex = /(.*?)\((\d+),(\d+)\)/g;
     var lines = qrcText.split(/[\r\n]/);
     for (const line of lines) {
-        //console.log(line);
         if (matches = metaRegex.exec(line)) { // meta info
             lyricText += matches[0] + "\r\n";
         } else if (matches = tsRegex.exec(line)) {
             let lyricLine = "";
             let baseTime = parseInt(matches[1]);
             let duration = parseInt(matches[2]);
+            const sentence = matches[3];
             lyricLine += "[" + formatTime(baseTime) + "]";
             lyricLine += "<" + formatTime(baseTime) + ">";
             // parse sub-timestamps
             let subMatches;
-            while (subMatches = ts2Regex.exec(line)) {
+            
+            //console.log(sentence);
+            
+            while (subMatches = ts2Regex.exec(sentence)) {
                 var startTime = parseInt(subMatches[2]);
                 let offset = parseInt(subMatches[3]);
                 let subWord = subMatches[1];
